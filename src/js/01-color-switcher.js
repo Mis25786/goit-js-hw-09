@@ -20,3 +20,42 @@
 // function getRandomHexColor() {
 //   return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 // }
+
+//* ===============================
+//* функція зміни рандом кольора
+function getRandomHexColor() {
+  return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+}
+//* ===============================
+//* доступ до кнопок та боді
+const startBtn = document.querySelector('[data-start]');
+// console.log(startBtn);
+const stopBtn = document.querySelector('[data-stop]');
+// console.log(stopBtn);
+// const body = document.querySelector('body');
+// console.dir(body);
+
+//* айді таймера
+let timerId = null;
+
+//* старт
+startBtn.addEventListener('click', () => {
+  //* запускаємо безперервний таймер і зчитуємо айді
+  timerId = setInterval(() => {
+    // body.style.backgroundColor = getRandomHexColor();
+    document.body.style.backgroundColor = getRandomHexColor();
+  }, 1000);
+
+  //* додаємо атрибут і видаляємо
+  startBtn.toggleAttribute('disabled');
+});
+
+//* стоп
+stopBtn.addEventListener('click', () => {
+  //* зупиняємо таймер
+  clearInterval(timerId);
+  alert(`Демонстрція кольорів зупинена!`);
+
+  //* видаляємо атрибут
+  startBtn.removeAttribute('disabled');
+});
