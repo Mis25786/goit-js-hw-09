@@ -16,3 +16,29 @@ img {
   display: block;
   max-width: 100%;
 }
+
+/* ================ 2 ================= */
+body {
+  display: table-caption;
+}
+.timer {
+  display: inline-flex;
+  border: 4px solid #000;
+  border-radius: 5px;
+  gap: 20;
+  margin-top: 10px;
+  padding: 10px;
+}
+.field {
+}
+.value {
+  font-size: 100px;
+  color: red;
+}
+.label {
+  display: flex;
+  font-size: 30px;
+  font-family: fantasy;
+  justify-content: center;
+}
+/* ================ 2 ================= */

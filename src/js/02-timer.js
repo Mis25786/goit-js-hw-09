@@ -100,19 +100,137 @@
 // Для відображення повідомлень користувачеві, замість window.alert(), використовуй бібліотеку notiflix.
 //?==================================================================================
 //* імпортуємо бібліотеку flatpickr
-// import flatpickr from 'flatpickr';
-// // Додатковий імпорт стилів
-// import 'flatpickr/dist/flatpickr.min.css';
-//*==========================================
+import flatpickr from 'flatpickr';
+// підкулючаємо CSS бібліотеки
+import 'flatpickr/dist/flatpickr.min.css';
+require('flatpickr/dist/themes/dark.css');
+//* імпортуємо бібліотеку notiflix
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 //*==========================================
-// const options = {
-//   enableTime: true,
-//   time_24hr: true,
-//   defaultDate: new Date(),
-//   minuteIncrement: 1,
-//   onClose(selectedDates) {
-//     console.log(selectedDates[0]);
-//   },
-// };
-// //*===========================================
+const refs = {
+  input: document.getElementById('datetime-picker'),
+  startBtn: document.querySelector('[data-start]'),
+  daysTimer: document.querySelector('[data-days]'),
+  hoursTimer: document.querySelector('[data-hours]'),
+  minutesTimer: document.querySelector('[data-minutes]'),
+  secondsTimer: document.querySelector('[data-seconds]'),
+  timerBox: document.querySelector('.timer'),
+};
+
+// const input = document.getElementById('datetime-picker');
+// const startBtn = document.querySelector('[data-start]');
+
+// const daysTimer = document.querySelector('[data-days]');
+// const hoursTimer = document.querySelector('[data-hours]');
+// const minutesTimer = document.querySelector('[data-minutes]');
+// const secondsTimer = document.querySelector('[data-seconds]');
+
+// const timer = document.querySelector('.timer');
+//* ==================== kalendar ==========================
+const options = {
+  enableTime: true, // Вмикає засіб вибору часу
+  time_24hr: true, // Відображає засіб вибору часу в 24-годинному режимі без вибору AM/PM, якщо ввімкнено.
+  defaultDate: new Date(), // Встановлює початкові вибрані дати.
+  minuteIncrement: 1, // Регулює крок для введення хвилин (включно з прокручуванням)
+  onClose(selectedDates) {
+    console.log(selectedDates[0]);
+    currentDifferenceDate(selectedDates);
+  },
+};
+
+//* підключаємо на input календар та його options (опції) отримуємо дату обрану користувачем
+const fp = flatpickr('input', options);
+
+//*============================ по Репеті ========================================
+
+//* слухач на кнопку
+refs.startBtn.addEventListener('click', onStart);
+
+function onStart() {
+  //* робимо кнопку після старту не активною
+  refs.startBtn.disabled = true;
+
+  //* айді таймера
+  intervalId = setInterval(() => {
+    // console.log(intervalId);
+
+    //* запускаємо час початку відліку - старт
+    const currentTime = Date.now();
+    //   console.log('chas', currentTime);
+
+    //* дата вибрана користувачем початковий час
+    const startTime = fp.selectedDates[0];
+
+    //* віднімаємо початковий час від початку відліку (отримуємо різницю між стартом і теперішнім часом)
+    const deltaTime = startTime - currentTime;
+    //   console.log(deltaTime);
+
+    //* при закінченні таймера зупиняємо його і виводимо повідомлення
+    if (deltaTime < 0) {
+      clearInterval(intervalId);
+      refs.startBtn.disabled = false;
+      return Notify.success('Please choose a new date!');
+    }
+
+    //* виводимо в об'єкт дні/години/хвилини/секунди
+    const time = convertMs(deltaTime);
+    //   console.log(time);
+
+    updateClockface(time);
+  }, 1000);
+}
+
+//* провіряємо дату чи не є минулим якщо так то виводимо повідомлення і кнопка не активна якщо ні то активна і можемо стартувати відлік
+function currentDifferenceDate(selectedDates) {
+  if (selectedDates[0] < Date.now()) {
+    refs.startBtn.disabled = true;
+    return Notify.failure('Please choose a date in the future');
+  } else {
+    refs.startBtn.disabled = false;
+    return Notify.success('Start a countdown timer?');
+  }
+}
+
+//* (показує часна сторінці) обновля інтерфейс
+function updateClockface({ days, hours, minutes, seconds }) {
+  refs.daysTimer.textContent = `${days}`;
+  refs.hoursTimer.textContent = `${hours}`;
+  refs.minutesTimer.textContent = `${minutes}`;
+  refs.secondsTimer.textContent = `${seconds}`;
+}
+
+//* добавляє до цифр таймера одне число (0)/(Огортаємо цією функцією Мат.вирази в функ. convertMs(ms) => addLeadingZero(Math.floor(ms / day));)
+function addLeadingZero(value) {
+  return String(value).padStart(2, 0);
+}
+
+//* приймає час в мілісекундах
+//* витягнемо з мілісекунд дні години хвилини секунди
+//* повертає об'єкт з властивостями - дні години хвилини секунди
+function convertMs(ms) {
+  // Number of milliseconds per unit of time
+  const second = 1000;
+  const minute = second * 60;
+  const hour = minute * 60;
+  const day = hour * 24;
+
+  // Remaining days
+  const days = addLeadingZero(Math.floor(ms / day));
+  // Remaining hours
+  const hours = addLeadingZero(Math.floor((ms % day) / hour));
+  // Remaining minutes
+  const minutes = addLeadingZero(Math.floor(((ms % day) % hour) / minute));
+  // Remaining seconds
+  const seconds = addLeadingZero(
+    Math.floor((((ms % day) % hour) % minute) / second)
+  );
+
+  return { days, hours, minutes, seconds };
+}
+
+//?====================================================================
+
+//?====================================================================
+const a = '!!!test control!!!';
+console.log(a);
