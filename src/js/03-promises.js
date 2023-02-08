@@ -33,7 +33,12 @@
 //   }
 // }
 
-// Доповни код функції createPromise таким чином, щоб вона повертала один проміс, який виконується або відхиляється через delay часу. Значенням промісу повинен бути об'єкт, в якому будуть властивості position і delay зі значеннями однойменних параметрів. Використовуй початковий код функції для вибору того, що потрібно зробити з промісом - виконати або відхилити.
+//todo Доповни код функції createPromise таким чином, щоб вона повертала один проміс,
+//todo який виконується або відхиляється через delay часу.
+//todo Значенням промісу повинен бути об'єкт, в якому будуть властивості position і delay
+//todo зі значеннями однойменних параметрів.
+//todo Використовуй початковий код функції для вибору того, що потрібно зробити з промісом
+//todo - виконати або відхилити.
 
 // createPromise(2, 1500)
 //   .then(({ position, delay }) => {
@@ -48,173 +53,82 @@
 //* імпортуємо бібліотеку notiflix
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-//* доступ до інпутів
-const refs = {
-  form: document.querySelector('.form'),
+//* викликати функцію під час сабміту
+//* викликати функцію - вказану кількість разів перебор
+//* робити затримку викликів введену кількість користувачем amount
+//* створити проміс в функції яка буде повертати проміс який виконується або відхиляється через delay часу
+//* його значення має бути об'єкт в якому будуть властивості position і delay
 
-  delay: document.querySelector('input[name="delay"]'),
-  step: document.querySelector('input[name="step"]'),
-  amount: document.querySelector('input[name="amount"]'),
+//* доступ до тегів
+// const refs = {
+//   form: document.querySelector('.form'),
 
-  submit: document.querySelector('button[type="submit"]'),
-};
+//   delay: document.querySelector('input[name="delay"]'),
+//   step: document.querySelector('input[name="step"]'),
+//   amount: document.querySelector('input[name="amount"]'),
 
-refs.form.addEventListener('input', onDateInput);
+//   submit: document.querySelector('button[type="submit"]'),
+// };
 
-function onDateInput() {
-  console.log('zis input =>');
+const form = document.querySelector('.form');
+// const delay = document.querySelector('input[name="delay"]');
+// const step = document.querySelector('input[name="step"]');
+// const amount = document.querySelector('input[name="amount"]');
+// const submit = document.querySelector('button[type="submit"]');
+
+//* на момент сабміту форми викликає функцію createPromise
+form.addEventListener('submit', onSubmit);
+
+// const delay = 0;
+// const step = 0;
+// const amount = 0;
+// console.log(delay);
+// console.log(step);
+// console.log(amount);
+
+function onSubmit(e) {
+  e.preventDefault();
+
+  //* витягуємо данні з інпутів
+  let delay = +e.currentTarget.elements.delay.value;
+  let step = +e.currentTarget.elements.step.value;
+  let amount = +e.currentTarget.elements.amount.value;
+
+  //* викликати функцію - вказану кількість разів і виводимо повідомлення
+  for (let i = 0; i <= amount; i += 1) {
+    createPromise(i, delay)
+      .then(({ position, delay }) => {
+        console.log(
+          Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`)
+        );
+      })
+      .catch(({ position, delay }) => {
+        console.log(
+          Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`)
+        );
+      });
+    delay += step;
+  }
 }
-
+//*============
 function createPromise(position, delay) {
   const shouldResolve = Math.random() > 0.3;
-  if (shouldResolve) {
-    // Fulfill
-  } else {
-    // Reject
-  }
+  //* деструктурізація об'єкта
+  const object = { position, delay };
 
-  //   .then(({ position, delay }) => {
-  //     Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-  //   })
-  //   .catch(({ position, delay }) => {
-  //     Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
-  //   });
+  //* створити проміс в функції яка буде повертати проміс який виконується або відхиляється через delay часу
+  //* його значення має бути об'єкт в якому будуть властивості position і delay
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (shouldResolve) {
+        resolve(object);
+        // Fulfill
+      } else {
+        reject(object);
+        // Reject
+      }
+    }, delay);
+  });
 }
-//
-// createPromise(2, 1500)
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-///
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 //?========================================
-// const form = document.querySelector('.form');
-// const refs = {
-//   delay: document.querySelector('[name = "delay"]'),
-//   step: document.querySelector('[name = "step"]'),
-//   amount: document.querySelector('[name = "amount"]'),
-// };
-// const btn = document.querySelector('button');
-
-// form.addEventListener('submit', onClick);
-
-// function createPromise(position, delay) {
-//   const promise = new Promise((resolve, reject) => {
-//     setTimeout(() => {
-//       const shouldResolve = Math.random() > 0.3;
-//       if (shouldResolve) {
-//         resolve({ position, delay });
-//       } else {
-//         reject({ position, delay });
-//       }
-//     }, delay);
-//   });
-//   return promise;
-// }
-
-// function onClick(event) {
-//   event.preventDefault();
-
-//   let delay = Number(refs.delay.value);
-//   let step = Number(refs.step.value);
-//   let amount = Number(refs.amount.value);
-
-//   for (let i = 1; i <= amount; i += 1) {
-//     createPromise(i, delay)
-//       .then(({ position, delay }) => {
-//         console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-//       })
-//       .catch(({ position, delay }) => {
-//         console.log(`❌ Rejected promise ${position} in ${delay}ms`);
-//       });
-//     delay += step;
-//   }
-// }
-
-//?================================================
-// // Import library
-// import { Notify } from 'notiflix/build/notiflix-notify-aio';
-
-// // Get form element
-// const formRef = document.querySelector('.form');
-
-// // Set event listener submit on form
-// formRef.addEventListener('submit', onSubmitForm);
-
-// // Submit form
-// function onSubmitForm(e) {
-//   e.preventDefault();
-
-//   let delay = Number(formRef.delay.value);
-
-//   for (let i = 1; i <= formRef.amount.value; i += 1) {
-//     createPromise(i, delay)
-//       .then(({ position, delay }) => {
-//         Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-//       })
-//       .catch(({ position, delay }) => {
-//         Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
-//       });
-//     delay += Number(formRef.step.value);
-//   }
-// }
-
-// // Create promise
-// function createPromise(position, delay) {
-//   const obj = { position, delay };
-//   const shouldResolve = Math.random() > 0.3;
-
-//   return new Promise((resolve, reject) => {
-//     setTimeout(() => {
-//       if (shouldResolve) {
-//         // Fulfill
-//         resolve(obj);
-//       } else {
-//         // Reject
-//         reject(obj);
-//       }
-//     }, delay);
-//   });
-// }
-//?================================================

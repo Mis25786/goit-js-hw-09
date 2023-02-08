@@ -174,7 +174,7 @@ function onStart() {
     if (deltaTime < 0) {
       clearInterval(intervalId);
       refs.startBtn.disabled = false;
-      return Notify.success('Please choose a new date!');
+      return Notify.info('Please choose a new date!');
     }
 
     //* виводимо в об'єкт дні/години/хвилини/секунди
