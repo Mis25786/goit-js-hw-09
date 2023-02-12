@@ -107,7 +107,7 @@
 import flatpickr from 'flatpickr';
 // підкулючаємо CSS бібліотеки
 import 'flatpickr/dist/flatpickr.min.css';
-require('flatpickr/dist/themes/dark.css');
+// require('flatpickr/dist/themes/dark.css');
 //* імпортуємо бібліотеку notiflix
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
@@ -131,6 +131,12 @@ const refs = {
 // const secondsTimer = document.querySelector('[data-seconds]');
 
 // const timer = document.querySelector('.timer');
+
+//*============================ по Репеті ========================================
+
+//* слухач на кнопку
+refs.startBtn.addEventListener('click', onStart);
+
 //* ==================== kalendar ==========================
 const options = {
   enableTime: true, // Вмикає засіб вибору часу
@@ -138,25 +144,26 @@ const options = {
   defaultDate: new Date(), // Встановлює початкові вибрані дати.
   minuteIncrement: 1, // Регулює крок для введення хвилин (включно з прокручуванням)
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
-    currentDifferenceDate(selectedDates);
+    // console.log(selectedDates[0]);
+    if (selectedDates[0] <= Date.now()) {
+      refs.startBtn.disabled = true;
+      return Notify.failure('Please choose a date in the future');
+    } else {
+      refs.startBtn.disabled = false;
+      return Notify.success('Start a countdown timer?');
+    }
   },
 };
 
 //* підключаємо на input календар та його options (опції) отримуємо дату обрану користувачем
 const fp = flatpickr('input', options);
 
-//*============================ по Репеті ========================================
-
-//* слухач на кнопку
-refs.startBtn.addEventListener('click', onStart);
-
 function onStart() {
   //* робимо кнопку після старту не активною
   refs.startBtn.disabled = true;
 
   //* айді таймера
-  intervalId = setInterval(() => {
+  let intervalId = setInterval(() => {
     // console.log(intervalId);
 
     //* запускаємо час початку відліку - старт
@@ -185,16 +192,10 @@ function onStart() {
   }, 1000);
 }
 
-//* провіряємо дату чи не є минулим якщо так то виводимо повідомлення і кнопка не активна якщо ні то активна і можемо стартувати відлік
-function currentDifferenceDate(selectedDates) {
-  if (selectedDates[0] < Date.now()) {
-    refs.startBtn.disabled = true;
-    return Notify.failure('Please choose a date in the future');
-  } else {
-    refs.startBtn.disabled = false;
-    return Notify.success('Start a countdown timer?');
-  }
-}
+// //* провіряємо дату чи не є минулим якщо так то виводимо повідомлення і кнопка не активна якщо ні то активна і можемо стартувати відлік
+// function currentDifferenceDate(selectedDates) {
+
+// }
 
 //* (показує часна сторінці) обновля інтерфейс
 function updateClockface({ days, hours, minutes, seconds }) {
